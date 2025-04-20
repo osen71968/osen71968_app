@@ -70,5 +70,4 @@ updateSheet('XVip', 1); // Sheet3 - XVip, cột B (index 1)
 
 // Ghi file mới với thông tin đã cập nhật
 xlsx.writeFile(workbook, outputFile);
-
 console.log('Cập nhật proxy thành công! File mới:', outputFile);
