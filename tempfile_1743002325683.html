@@ -1,0 +1,74 @@
+<script>
+    async function processExcel() {
+        const fileInput = document.getElementById('excelFile');
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert('Please select an Excel file first');
+            return;
+        }
+
+        // Đọc file Excel
+        const data = await file.arrayBuffer();
+        const workbook = XLSX.read(data);
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const excelData = XLSX.utils.sheet_to_json(firstSheet, {header: ['name', 'ip']});
+
+        // Bỏ dòng header nếu có
+        excelData.shift();
+
+        // Tạo mảng arrInput
+        let arrInput = excelData.map(row => ({
+            name: row.name,
+            ip: row.ip
+        }));
+        
+        console.log('arrInput ', arrInput);
+
+        // Mảng search và replace mẫu (có thể thay đổi theo nhu cầu)
+        const search = ['192.168.1.1', '10.0.0.1']; // IP cần tìm
+        const replace = ['172.16.0.1', '172.16.0.2']; // IP thay thế
+
+        // Thay thế IP
+        arrInput = arrInput.map(item => {
+            const index = search.indexOf(item.ip);
+            if (index !== -1) {
+                return {
+                    ...item,
+                    ip: replace[index]
+                };
+            }
+            return item;
+        });
+
+        // Tạo file Excel mới
+        const newWorksheet = XLSX.utils.json_to_sheet(arrInput, {header: ['name', 'ip']});
+        const newWorkbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(newWorkbook, newWorksheet, 'Sheet1');
+
+        // Xuất file
+        // XLSX.writeFile(newWorkbook, 'proxy_final.xlsx');
+
+        console.log('Processed array:', arrInput);
+
+        // Thêm đoạn mã mới để cập nhật bảng HTML
+        updateTable(arrInput);
+    }
+
+    function updateTable(arrInput) {
+        const tbody = document.querySelector('#DataTables_Table_0 tbody');
+        const rows = tbody.querySelectorAll('tr');
+
+        rows.forEach(row => {
+            const oldIpCell = row.querySelector('td:nth-child(4)');
+            const newIpCell = row.querySelector('td:nth-child(5)');
+            const oldIp = oldIpCell.textContent;
+
+            const foundItem = arrInput.find(item => item.ip === oldIp);
+            if (foundItem) {
+                oldIpCell.textContent = foundItem.ip;
+                newIpCell.textContent = foundItem.ip; // Nếu bạn muốn cập nhật cột "IPv4 Mới" cũng
+            }
+        });
+    }
+</script>
