@@ -1,6 +1,5 @@
 version: 1.0.0
 maintainers:
-  - github_id: 123456 # Thay thế bằng ID GitHub của bạn
-  - github_id: 789012 # Thêm ID GitHub của các maintainer khác nếu có
+  - github_id: 160587657 # Thay thế bằng ID GitHub của bạn
 tussle:
   threshold: 1 # Số lượng phiếu bầu tối thiểu cần thiết
